@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Créer/Éditer un Template</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <link href="../css/style_create_template.css" rel="stylesheet" />
+  </head>
+
+  <body>
+    <div class="container">
+      <h1 class="text-center my-4" id="pageTitle">Créer un Template</h1>
+      <div class="toolbar text-center">
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('text')"
+        >
+          Texte
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('email')"
+        >
+          E-mail
+        </button>
+        <button class="btn btn-outline-primary" onclick="showFieldModal('url')">
+          URL
+        </button>
+        <button class="btn btn-outline-primary" onclick="showFieldModal('tel')">
+          Tél.
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('number')"
+        >
+          Nombre
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('date')"
+        >
+          Date
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('textarea')"
+        >
+          Zone de texte
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('select')"
+        >
+          Menu déroulant
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('checkbox')"
+        >
+          Cases à cocher
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('radio')"
+        >
+          Boutons radio
+        </button>
+        <button
+          class="btn btn-outline-primary"
+          onclick="showFieldModal('file')"
+        >
+          Fichier
+        </button>
+      </div>
+      <form id="dynamic-form" class="my-4"></form>
+      <textarea id="formCode" class="form-control" rows="10"></textarea>
+      <input
+        type="text"
+        id="fileName"
+        placeholder="Nom du fichier (sans .html)"
+      />
+      <div id="saveLoadButtons">
+        <button id="saveButton" onclick="saveHTML()">Sauvegarder</button>
+      </div>
+    </div>
+
+    <!-- Modal de personnalisation -->
+    <div
+      class="modal fade"
+      id="textFieldModal"
+      tabindex="-1"
+      aria-labelledby="textFieldModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="textFieldModalLabel">
+              Personnaliser le champ
+            </h5>
+            <button
+              type="button"
+              class="close"
+              data-dismiss="modal"
+              aria-label="Close"
+            >
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <div id="customization-content"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-dismiss="modal"
+            >
+              Fermer
+            </button>
+            <button
+              type="button"
+              class="btn btn-primary"
+              onclick="generateFieldTag()"
+            >
+              Ajouter au formulaire
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="../js/script_create_template.js"></script>
+    <script>
+      $(document).ready(function () {
+        const urlParams = new URLSearchParams(window.location.search);
+        const editFileName = urlParams.get("edit");
+
+        if (editFileName) {
+          $("#pageTitle").text("Éditer le Template");
+          $("#fileName").val(editFileName).prop("readonly", true);
+          loadTemplateContent(editFileName);
+        }
+      });
+
+      function loadTemplateContent(fileName) {
+        $.ajax({
+          url: "../includes/get_template_content.php",
+          method: "GET",
+          data: { fileName: fileName },
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              $("#formCode").val(response.content);
+            } else {
+              alert("Erreur : " + response.message);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Erreur de requête AJAX : ", status, error);
+            alert("Erreur de chargement du contenu du modèle.");
+          },
+        });
+      }
+
+      function saveHTML() {
+        const htmlCode = document.getElementById("formCode").value;
+        const fileName = document.getElementById("fileName").value || "default";
+
+        $.ajax({
+          url: "../includes/save_template.php",
+          method: "POST",
+          data: {
+            formCode: htmlCode,
+            fileName: fileName,
+          },
+          dataType: "json",
+          success: function (response) {
+            if (response.success) {
+              alert(response.message);
+              window.location.href = "../templates/index2.html"; // Redirige vers la liste des templates
+            } else {
+              alert("Erreur lors de la sauvegarde : " + response.message);
+            }
+          },
+          error: function (xhr, status, error) {
+            console.error("Erreur de requête AJAX : ", status, error);
+            alert("Erreur lors de la sauvegarde du template.");
+          },
+        });
+      }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  </body>
+</html>

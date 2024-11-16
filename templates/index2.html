@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des Templates</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        background-color: #f0f2f5;
+        font-family: "Roboto", Arial, sans-serif;
+        color: #333;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .container {
+        margin: 10px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+      }
+
+      h1 {
+        font-size: 36px;
+        color: #2c3e50;
+        margin-bottom: 20px;
+        text-align: center;
+        font-weight: 700;
+      }
+
+      .text-muted {
+        color: #7f8c8d;
+        font-size: 18px;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .template-list {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .template-button {
+        width: 100%;
+        padding: 15px 50px 15px 20px;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 4px;
+        text-align: left;
+        font-size: 18px;
+        color: #333;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        position: relative;
+        margin-bottom: 10px;
+      }
+
+      .template-button:hover {
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      }
+
+      .edit-icon,
+      .delete-icon {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #db5534;
+        font-size: 20px;
+        cursor: pointer;
+      }
+
+      .edit-icon {
+        right: 35px;
+      }
+
+      .delete-icon {
+        right: 10px;
+      }
+
+      .create-template {
+        background-color: #db5534;
+        color: #ffffff;
+        border: none;
+        padding: 15px 20px;
+        font-size: 18px;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        width: 100%;
+        text-align: center;
+        margin-top: 20px;
+      }
+
+      .create-template:hover {
+        background-color: #e86544eb;
+      }
+
+      .create-template i {
+        margin-right: 10px;
+      }
+
+      #submitButton,
+      #backButton {
+        padding: 10px 20px;
+        font-size: 16px;
+        font-weight: bold;
+        text-transform: uppercase;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+      }
+
+      .custom-alert {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+
+      .custom-alert-content {
+        background-color: #f1f1f1;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-width: 400px;
+        border-radius: 5px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      #custom-alert-message {
+        color: #333;
+        font-size: 18px;
+        margin-bottom: 20px;
+      }
+      #custom-alert-close {
+        background-color: #333;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        border-radius: 3px;
+        transition: background-color 0.3s;
+      }
+
+      #custom-alert-close:hover {
+        background-color: #555;
+      }
+
+      #generatedContent {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+
+      #content {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      #content .highlighted {
+        font-weight: bold;
+        color: #666;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      textarea:focus,
+      select:focus {
+        border-color: #af724c;
+        box-shadow: 0 0 8px rgba(76, 175, 80, 0.6);
+      }
+
+      label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+        color: #333;
+      }
+
+      button[type="submit"],
+      #backButton {
+        background: #db5534;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 30px auto 0;
+        box-shadow: 0 5px 15px rgba(219, 85, 52, 0.4);
+      }
+
+      button[type="submit"]:hover,
+      #backButton:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(219, 85, 52, 0.6);
+      }
+
+      .g-recaptcha {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 20px, 0);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      #dynamic-form > *,
+      #generatedContent > * {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+      }
+
+      #dynamic-form > *:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      #dynamic-form > *:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      #dynamic-form > *:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+
+      .orange-bold-title {
+        font-weight: bold;
+        color: orange;
+        display: block;
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="headtemp">
+        <h1 class="text-center my-4">Choisissez un modèle</h1>
+        <p class="text-center text-muted mb-4">
+          Personnalisez l'un de nos modèles de formulaire prédéfinis ou
+          commencez à partir de zéro.
+        </p>
+      </div>
+
+      <div class="template-list" id="templateList">
+        <!-- Les modèles seront insérés dynamiquement ici -->
+      </div>
+
+      <button
+        class="create-template"
+        onclick="window.location.href='index.html'"
+      >
+        <i class="fas fa-plus"></i> Proposer un Modèle
+      </button>
+    </div>
+    <div id="custom-alert" class="custom-alert">
+      <div class="custom-alert-content">
+        <p id="custom-alert-message"></p>
+        <button id="custom-alert-close">OK</button>
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var existingTemplates = [];
+
+        loadTemplates();
+
+        function loadTemplates() {
+          $.ajax({
+            url: "../includes/get_templates.php",
+            method: "GET",
+            dataType: "json",
+            success: function (response) {
+              console.log(
+                "Réponse de ../includes/get_templates.php:",
+                response
+              );
+              if (response.success) {
+                var newTemplates = response.templates.filter(function (
+                  template
+                ) {
+                  return !existingTemplates.includes(template.nom_fichier);
+                });
+
+                newTemplates.sort(function (a, b) {
+                  return a.nom_fichier.localeCompare(b.nom_fichier);
+                });
+
+                displayTemplates(newTemplates);
+              } else {
+                showCustomAlert("Erreur : " + response.message);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("Erreur de requête AJAX : ", status, error);
+              showCustomAlert("Erreur de chargement des modèles.");
+            },
+          });
+        }
+
+        function displayTemplates(templates) {
+          var templateList = $("#templateList");
+          templateList.empty();
+
+          templates.forEach(function (template) {
+            var button = $("<button>")
+              .addClass("template-button")
+              .attr("data-template-id", template.id)
+              .html(
+                `${template.nom_fichier}
+          <i class="fas fa-edit edit-icon"></i>
+          <i class="fas fa-trash delete-icon"></i>`
+              )
+              .click(function (e) {
+                if (
+                  !$(e.target).hasClass("edit-icon") &&
+                  !$(e.target).hasClass("delete-icon")
+                ) {
+                  loadTemplateContent(template.nom_fichier, template.id);
+                }
+              });
+
+            button.find(".edit-icon").click(function (e) {
+              e.stopPropagation();
+              openEditPage(template.nom_fichier, template.id);
+            });
+
+            button.find(".delete-icon").click(function (e) {
+              e.stopPropagation();
+              deleteTemplate(template.id);
+            });
+
+            templateList.append(button);
+          });
+        }
+
+        function openEditPage(fileName) {
+          window.location.href =
+            "index.html?edit=" + encodeURIComponent(fileName);
+        }
+
+        function loadTemplateContent(fileName, templateId) {
+          $.ajax({
+            url: "../includes/get_template_content.php",
+            method: "GET",
+            data: { fileName: fileName },
+            dataType: "json",
+            success: function (response) {
+              console.log(
+                "Réponse de ../includes/get_template_content.php:",
+                response
+              );
+              if (response.success) {
+                var processedContent = processContent(response.content);
+                openFormInCurrentWindow(processedContent, templateId, fileName);
+              } else {
+                showCustomAlert("Erreur : " + response.message);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("Erreur de requête AJAX : ", status, error);
+              showCustomAlert("Erreur de chargement du contenu du modèle.");
+            },
+          });
+        }
+
+        function processContent(content) {
+          let processedContent = content;
+          let isSpecialTags = content.includes("[") && content.includes("]");
+
+          if (isSpecialTags) {
+            processedContent = processSpecialTags(content);
+          }
+
+          if (!processedContent.includes("g-recaptcha")) {
+            processedContent +=
+              '<div class="g-recaptcha" data-sitekey="6Ld3KxYqAAAAAPAaB-KXGxJLjjcrHWPmvym68YHB"></div>';
+          }
+
+          if (
+            !processedContent.includes('<button type="submit"') &&
+            !processedContent.includes('<input type="submit"')
+          ) {
+            processedContent += '<button type="submit">Envoyer</button>';
+          }
+
+          // Traitement des titres entre **
+          processedContent = processedContent.replace(
+            /\*\*(.*?)\*\*/g,
+            '<span class="orange-bold-title">$1</span><br>'
+          );
+
+          return processedContent;
+        }
+
+        function processSpecialTags(content) {
+          // Champ texte
+          content = content.replace(
+            /\[text\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+(?:placeholder\s+)?"([^"]*)")?\]/g,
+            function (match, name, id, className, value) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let valueAttr = match.includes("placeholder")
+                ? ""
+                : value
+                ? ` value="${value}"`
+                : "";
+              let placeholderAttr = match.includes("placeholder")
+                ? ` placeholder="${value}"`
+                : "";
+              let required = match.includes("*") ? " required" : "";
+
+              return `<label for="${id}">${name}</label><input type="text" id="${id}" name="${name}"${classAttr}${valueAttr}${placeholderAttr}${required}>`;
+            }
+          );
+
+          // Champ email
+          content = content.replace(
+            /\[email\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+(?:placeholder\s+)?"([^"]*)")?\]/g,
+            function (match, name, id, className, value) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let valueAttr = match.includes("placeholder")
+                ? ""
+                : value
+                ? ` value="${value}"`
+                : "";
+              let placeholderAttr = match.includes("placeholder")
+                ? ` placeholder="${value}"`
+                : "";
+              let required = match.includes("*") ? " required" : "";
+
+              return `<label for="${id}">${name}</label><input type="email" id="${id}" name="${name}"${classAttr}${valueAttr}${placeholderAttr}${required}>`;
+            }
+          );
+
+          // Champ téléphone
+          content = content.replace(
+            /\[tel\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+(?:placeholder\s+)?"([^"]*)")?\]/g,
+            function (match, name, id, className, value) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let valueAttr = match.includes("placeholder")
+                ? ""
+                : value
+                ? ` value="${value}"`
+                : "";
+              let placeholderAttr = match.includes("placeholder")
+                ? ` placeholder="${value}"`
+                : "";
+              let required = match.includes("*") ? " required" : "";
+
+              return `<label for="${id}">${name}</label><input type="tel" id="${id}" name="${name}"${classAttr}${valueAttr}${placeholderAttr}${required}>`;
+            }
+          );
+
+          // Boutons radio
+          content = content.replace(
+            /\[radio\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+label_first)?(?:\s+default:(\d+))?\s+((?:"[^"]*"\s*)+)\]/g,
+            function (match, name, id, className, defaultValue, options) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let optionsArray = options
+                .match(/"([^"]*)"/g)
+                .map((o) => o.replace(/"/g, ""));
+              let html = `<fieldset${classAttr}><legend>${name}</legend>`;
+              optionsArray.forEach((option, index) => {
+                let optionId = `${id}_${index}`;
+                let checked = index + 1 == defaultValue ? " checked" : "";
+                html += `
+                <input type="radio" id="${optionId}" name="${name}" value="${option}"${checked}>
+                <label for="${optionId}">${option}</label>
+              `;
+              });
+              html += `</fieldset>`;
+              return html;
+            }
+          );
+
+          // Champ URL
+          content = content.replace(
+            /\[url\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+(?:placeholder\s+)?"([^"]*)")?\]/g,
+            function (match, name, id, className, value) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let valueAttr = match.includes("placeholder")
+                ? ""
+                : value
+                ? ` value="${value}"`
+                : "";
+              let placeholderAttr = match.includes("placeholder")
+                ? ` placeholder="${value}"`
+                : "";
+              let required = match.includes("*") ? " required" : "";
+
+              return `<label for="${id}">${name}</label><input type="url" id="${id}" name="${name}"${classAttr}${valueAttr}${placeholderAttr}${required}>`;
+            }
+          );
+          // Champ nombre
+          content = content.replace(
+            /\[number\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+min:(\d+))?(?:\s+max:(\d+))?(?:\s+(?:placeholder\s+)?"([^"]*)")?\]/g,
+            function (match, name, id, className, min, max, value) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let minAttr = min ? ` min="${min}"` : "";
+              let maxAttr = max ? ` max="${max}"` : "";
+              let valueAttr = match.includes("placeholder")
+                ? ""
+                : value
+                ? ` value="${value}"`
+                : "";
+              let placeholderAttr = match.includes("placeholder")
+                ? ` placeholder="${value}"`
+                : "";
+              let required = match.includes("*") ? " required" : "";
+
+              return `<label for="${id}">${name}</label><input type="number" id="${id}" name="${name}"${classAttr}${minAttr}${maxAttr}${valueAttr}${placeholderAttr}${required}>`;
+            }
+          );
+
+          // Champ date
+          content = content.replace(
+            /\[date\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+min:(\S+))?(?:\s+max:(\S+))?(?:\s+(?:placeholder\s+)?"([^"]*)")?\]/g,
+            function (match, name, id, className, min, max, placeholder) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let minAttr = min ? ` min="${min}"` : "";
+              let maxAttr = max ? ` max="${max}"` : "";
+              let placeholderAttr = placeholder
+                ? ` placeholder="${placeholder}"`
+                : "";
+              let required = match.includes("*") ? " required" : "";
+
+              return `<label for="${id}">${name}</label><input type="date" id="${id}" name="${name}"${classAttr}${minAttr}${maxAttr}${placeholderAttr}${required}>`;
+            }
+          );
+
+          // Champ textarea
+          content = content.replace(
+            /\[textarea\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+rows:(\d+))?(?:\s+cols:(\d+))?(?:\s+(?:placeholder\s+)?"([^"]*)")?\]/g,
+            function (match, name, id, className, rows, cols, placeholder) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let rowsAttr = rows ? ` rows="${rows}"` : "";
+              let colsAttr = cols ? ` cols="${cols}"` : "";
+              let placeholderAttr = placeholder
+                ? ` placeholder="${placeholder}"`
+                : "";
+              let required = match.includes("*") ? " required" : "";
+
+              return `<label for="${id}">${name}</label><textarea id="${id}" name="${name}"${classAttr}${rowsAttr}${colsAttr}${placeholderAttr}${required}></textarea>`;
+            }
+          );
+
+          // Champ select
+          content = content.replace(
+            /\[select\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+multiple)?(?:\s+include_blank)?\s+((?:"[^"]*"\s*)+)\]/g,
+            function (match, name, id, className, options) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let optionsArray = options
+                .match(/"([^"]*)"/g)
+                .map((o) => o.replace(/"/g, ""));
+              let multiple = match.includes("multiple") ? " multiple" : "";
+              let required = match.includes("*") ? " required" : "";
+
+              let html = `<label for="${id}">${name}</label>
+        <select id="${id}" name="${name}"${classAttr}${multiple}${required}>`;
+
+              if (match.includes("include_blank")) {
+                html += `<option value=""></option>`;
+              }
+
+              optionsArray.forEach((option) => {
+                html += `<option value="${option}">${option}</option>`;
+              });
+
+              html += `</select>`;
+              return html;
+            }
+          );
+
+          // Champ checkbox
+          content = content.replace(
+            /\[checkbox\*?\s+(\w+)(?:\s+id:(\w+))?(?:\s+class:(\w+))?(?:\s+label_first)?(?:\s+exclusive)?\s+((?:"[^"]*"\s*)+)\]/g,
+            function (match, name, id, className, options) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let optionsArray = options
+                .match(/"([^"]*)"/g)
+                .map((o) => o.replace(/"/g, ""));
+              let html = `<fieldset${classAttr}><legend>${name}</legend>`;
+              let type = match.includes("exclusive") ? "radio" : "checkbox";
+
+              optionsArray.forEach((option, index) => {
+                let optionId = `${id}_${index}`;
+                html += `
+          <input type="${type}" id="${optionId}" name="${name}" value="${option}">
+          <label for="${optionId}">${option}</label>
+        `;
+              });
+
+              html += `</fieldset>`;
+              return html;
+            }
+          );
+
+          // Champ fichier
+          content = content.replace(
+            /\[file\*?\s+(\w+)(?:\s+limit:(\d+))?(?:\s+filetypes:(\w+))?(?:\s+id:(\w+))?(?:\s+class:(\w+))?\]/g,
+            function (match, name, limit, filetypes, id, className) {
+              id = id || name;
+              let classAttr = className ? ` class="${className}"` : "";
+              let accept = filetypes ? ` accept=".${filetypes}"` : "";
+              let required = match.includes("*") ? " required" : "";
+              let limitAttr = limit ? ` data-max-size="${limit * 1024}"` : "";
+              return `<label for="${id}">${name}</label><input type="file" id="${id}" name="${name}"${classAttr}${accept}${required}${limitAttr}>`;
+            }
+          );
+
+          return content;
+        }
+        function openFormInCurrentWindow(content, templateId, fileName) {
+          $("#templateList").hide();
+          $(".create-template").hide();
+          $(".headtemp").hide();
+
+          var formHtml = `
+    <div id="formContainer">
+      <h1 class="text-center my-4">${fileName}</h1>
+      <form id="dynamic-form">
+        ${content}
+        <input type="hidden" name="template_id" value="${templateId}">
+      </form>
+      <div id="generatedContent" style="display:none;">
+        
+        <div id="content"></div>
+        <button id="backButton" style="display:none;">Retour aux templates</button>
+      </div>
+    </div>
+  `;
+
+          $(".container").append(formHtml);
+
+          // Ajout des styles spécifiques pour le contenu généré
+          $("<style>")
+            .prop("type", "text/css")
+            .html(
+              `
+      #generatedContent {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+      #content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+        font-weight: bold;
+        color: #4a4a4a;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+      }
+      #content p {
+        margin-bottom: 1em;
+      }
+      #content .highlighted {
+        font-weight: bold;
+        color: #db5534;
+      }
+    `
+            )
+            .appendTo("head");
+
+          $("#backButton").click(function () {
+            $("#formContainer").remove();
+            $(".headtemp").show();
+            $("#templateList").show();
+          });
+
+          // Ajout du script reCAPTCHA
+          var script = document.createElement("script");
+          script.src = "https://www.google.com/recaptcha/api.js";
+          document.head.appendChild(script);
+
+          $("#dynamic-form").on("submit", function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            var response = grecaptcha.getResponse();
+            if (response.length == 0) {
+              showCustomAlert("Veuillez cocher le reCAPTCHA");
+              return false;
+            }
+
+            formData.append("g-recaptcha-response", response);
+
+            console.log("Données du formulaire:", Object.fromEntries(formData));
+            $.ajax({
+              url: "../includes/submit_form.php",
+              method: "POST",
+              data: formData,
+              processData: false,
+              contentType: false,
+              dataType: "json",
+              success: function (response) {
+                console.log("Réponse du serveur:", response);
+                if (response.success) {
+                  $("#dynamic-form").hide();
+                  $("#generatedContent").show();
+
+                  // Traitement amélioré du contenu généré
+                  var formattedContent = response.content
+                    .replace(
+                      /\*\*(.*?)\*\*/g,
+                      '<span class="highlighted">$1</span>'
+                    )
+                    .replace(/\n/g, "<br>") // Ajout des retours à la ligne
+                    .replace(
+                      /(#{1,6})\s*(.*?)$/gm,
+                      function (match, hashes, title) {
+                        var level = hashes.length;
+                        return `<h${level}>${title}</h${level}>`;
+                      }
+                    );
+
+                  $("#content").html(formattedContent);
+
+                  $("#backButton").show();
+                } else {
+                  showCustomAlert("Erreur : " + response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                console.error("Erreur AJAX:", status, error);
+                console.log("Réponse brute:", xhr.responseText);
+                showCustomAlert(
+                  "Une erreur est survenue lors de la soumission du formulaire."
+                );
+              },
+            });
+          });
+        }
+      });
+
+      function deleteTemplate(templateId) {
+        if (confirm("Êtes-vous sûr de vouloir supprimer ce template ?")) {
+          $.ajax({
+            url: "../includes/delete_template.php",
+            method: "POST",
+            data: { id: templateId },
+            dataType: "json",
+            success: function (response) {
+              console.log(
+                "Réponse de ../includes/delete_template.php:",
+                response
+              );
+              if (response.success) {
+                $(`button[data-template-id="${templateId}"]`).remove();
+                showCustomAlert("Le template a été supprimé avec succès.");
+              } else {
+                showCustomAlert("Erreur : " + response.message);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("Erreur de requête AJAX : ", status, error);
+              showCustomAlert("Erreur de suppression du modèle.");
+            },
+          });
+        }
+      }
+      function showCustomAlert(message) {
+        $("#custom-alert-message").text(message);
+        $("#custom-alert").fadeIn();
+      }
+
+      // Ajoutez ceci pour fermer l'alerte lorsqu'on clique sur OK
+      $("#custom-alert-close").click(function () {
+        $("#custom-alert").fadeOut();
+      });
+    </script>
+  </body>
+</html>

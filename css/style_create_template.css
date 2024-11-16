@@ -1,0 +1,98 @@
+body {
+  background-color: #f0f2f5;
+  font-family: "Roboto", Arial, sans-serif;
+  color: #333;
+}
+
+.container {
+  width: 100%;
+  margin: 10px auto;
+  padding: 30px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+  font-size: 36px;
+  color: #2c3e50;
+  margin-bottom: 30px;
+  text-align: center;
+  font-weight: 700;
+}
+
+.toolbar {
+  margin-bottom: 30px;
+}
+
+.toolbar .btn-outline-primary {
+  margin: 5px;
+  color: #db5534;
+  border-color: #db5534;
+  transition: all 0.3s ease;
+}
+
+.toolbar .btn-outline-primary:hover {
+  background-color: #db5534;
+  color: #ffffff;
+}
+
+#dynamic-form {
+  margin-bottom: 30px;
+}
+
+#formCode {
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+#fileName {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 4px;
+}
+
+#saveLoadButtons {
+  text-align: center;
+}
+
+#saveButton {
+  background-color: #db5534;
+  color: #ffffff;
+  border: none;
+  padding: 15px 30px;
+  font-size: 18px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#saveButton:hover {
+  background-color: #e86544eb;
+}
+
+.modal-content {
+  border-radius: 8px;
+}
+
+.modal-header {
+  background-color: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.modal-footer {
+  border-top: 1px solid #e0e0e0;
+}
+
+.btn-primary {
+  background-color: #db5534;
+  border-color: #db5534;
+}
+
+.btn-primary:hover {
+  background-color: #e86544eb;
+  border-color: #e86544eb;
+}

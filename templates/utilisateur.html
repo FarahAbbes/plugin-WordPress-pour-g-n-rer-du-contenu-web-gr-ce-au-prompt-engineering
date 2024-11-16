@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Liste des Templates</title>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      #generatedContent {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+
+      #content {
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      #content .highlighted {
+        font-weight: bold;
+        color: #666;
+      }
+
+      body {
+        font-family: "Roboto", sans-serif;
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        margin: 0;
+        padding: 20px;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      input[type="text"],
+      input[type="email"],
+      textarea,
+      select {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+      }
+
+      input[type="text"]:focus,
+      input[type="email"]:focus,
+      textarea:focus,
+      select:focus {
+        border-color: #db5534;
+        box-shadow: 0 0 8px #db5534;
+      }
+
+      label {
+        font-weight: bold;
+        margin-bottom: 8px;
+        display: block;
+        color: #333;
+      }
+
+      button[type="submit"],
+      #backButton {
+        background: #db5534;
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        font-size: 18px;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: block;
+        margin: 30px auto 0;
+        box-shadow: 0 5px 15px rgba(219, 85, 52, 0.4);
+      }
+
+      button[type="submit"]:hover,
+      #backButton:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(219, 85, 52, 0.6);
+      }
+
+      .g-recaptcha {
+        margin-top: 20px;
+        display: flex;
+        justify-content: center;
+      }
+
+      #generatedContent {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-top: 20px;
+      }
+
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translate3d(0, 20px, 0);
+        }
+        to {
+          opacity: 1;
+          transform: translate3d(0, 0, 0);
+        }
+      }
+
+      #dynamic-form > *,
+      #generatedContent > * {
+        animation: fadeInUp 0.6s ease-out;
+        animation-fill-mode: both;
+      }
+
+      #dynamic-form > *:nth-child(1) {
+        animation-delay: 0.1s;
+      }
+      #dynamic-form > *:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+      #dynamic-form > *:nth-child(3) {
+        animation-delay: 0.3s;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="headtemp">
+        <h1 class="text-center my-4">Choisissez un modèle</h1>
+        <p class="text-center text-muted mb-4">
+          Sélectionnez l'un de nos modèles de formulaire prédéfinis.
+        </p>
+      </div>
+
+      <div class="template-list" id="templateList">
+        <!-- Les modèles seront insérés dynamiquement ici -->
+      </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        var existingTemplates = [];
+
+        loadTemplates();
+
+        function loadTemplates() {
+          $.ajax({
+            url: "get_templates.php",
+            method: "GET",
+            dataType: "json",
+            success: function (response) {
+              console.log("Réponse de get_templates.php:", response);
+              if (response.success) {
+                var newTemplates = response.templates.filter(function (
+                  template
+                ) {
+                  return !existingTemplates.includes(template.nom_fichier);
+                });
+
+                newTemplates.sort(function (a, b) {
+                  return a.nom_fichier.localeCompare(b.nom_fichier);
+                });
+
+                displayTemplates(newTemplates);
+              } else {
+                alert("Erreur : " + response.message);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("Erreur de requête AJAX : ", status, error);
+              alert("Erreur de chargement des modèles.");
+            },
+          });
+        }
+
+        function displayTemplates(templates) {
+          var templateList = $("#templateList");
+          templateList.empty();
+
+          templates.forEach(function (template) {
+            var button = $("<button>")
+              .addClass("template-button")
+              .attr("data-template-id", template.id)
+              .text(template.nom_fichier)
+              .click(function () {
+                loadTemplateContent(template.nom_fichier, template.id);
+              });
+
+            templateList.append(button);
+          });
+        }
+
+        function loadTemplateContent(fileName, templateId) {
+          $.ajax({
+            url: "get_template_content.php",
+            method: "GET",
+            data: { fileName: fileName },
+            dataType: "json",
+            success: function (response) {
+              console.log("Réponse de get_template_content.php:", response);
+              if (response.success) {
+                var processedContent = processContent(response.content);
+                openFormInCurrentWindow(processedContent, templateId, fileName);
+              } else {
+                alert("Erreur : " + response.message);
+              }
+            },
+            error: function (xhr, status, error) {
+              console.error("Erreur de requête AJAX : ", status, error);
+              alert("Erreur de chargement du contenu du modèle.");
+            },
+          });
+        }
+
+        function processContent(content) {
+          let processedContent = content;
+          let isSpecialTags = content.includes("[") && content.includes("]");
+
+          if (isSpecialTags) {
+            processedContent = processSpecialTags(content);
+          }
+
+          if (!processedContent.includes("g-recaptcha")) {
+            processedContent +=
+              '<div class="g-recaptcha" data-sitekey="6Ld3KxYqAAAAAPAaB-KXGxJLjjcrHWPmvym68YHB"></div>';
+          }
+
+          if (
+            !processedContent.includes('<button type="submit"') &&
+            !processedContent.includes('<input type="submit"')
+          ) {
+            processedContent += '<button type="submit">Envoyer</button>';
+          }
+
+          return processedContent;
+        }
+
+        function processSpecialTags(content) {
+          // Implémentez ici le traitement des balises spéciales
+          // (Le code pour processSpecialTags reste le même que dans votre version originale)
+          // ...
+
+          return content;
+        }
+        function openFormInCurrentWindow(content, templateId, fileName) {
+          $(".headtemp").hide();
+          $("#templateList").hide();
+
+          var formHtml = `
+    <div id="formContainer">
+      <h1 class="text-center my-4">${fileName}</h1>
+      <form id="dynamic-form">
+        ${content}
+        <input type="hidden" name="template_id" value="${templateId}">
+      </form>
+      <div id="generatedContent" style="display:none;">
+        
+        <div id="content"></div>
+        <button id="backButton" style="display:none;">Retour aux templates</button>
+      </div>
+    </div>
+  `;
+
+          $(".container").append(formHtml);
+
+          // Ajout des styles spécifiques pour le contenu généré
+          $("<style>")
+            .prop("type", "text/css")
+            .html(
+              `
+      #generatedContent {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+      }
+      #content h1, #content h2, #content h3, #content h4, #content h5, #content h6 {
+        font-weight: bold;
+        color: #4a4a4a;
+        margin-top: 1.5em;
+        margin-bottom: 0.5em;
+      }
+      #content p {
+        margin-bottom: 1em;
+      }
+      #content .highlighted {
+        font-weight: bold;
+        color: #666;
+      }
+    `
+            )
+            .appendTo("head");
+
+          $("#backButton").click(function () {
+            $("#formContainer").remove();
+            $(".headtemp").show();
+            $("#templateList").show();
+          });
+
+          // Ajout du script reCAPTCHA
+          var script = document.createElement("script");
+          script.src = "https://www.google.com/recaptcha/api.js";
+          document.head.appendChild(script);
+
+          $("#dynamic-form").on("submit", function (e) {
+            e.preventDefault();
+            var formData = new FormData(this);
+
+            var response = grecaptcha.getResponse();
+            if (response.length == 0) {
+              alert("Veuillez cocher le reCAPTCHA");
+              return false;
+            }
+
+            formData.append("g-recaptcha-response", response);
+
+            console.log("Données du formulaire:", Object.fromEntries(formData));
+            $.ajax({
+              url: "submit_form.php",
+              method: "POST",
+              data: formData,
+              processData: false,
+              contentType: false,
+              dataType: "json",
+              success: function (response) {
+                console.log("Réponse du serveur:", response);
+                if (response.success) {
+                  $("#dynamic-form").hide();
+                  $("#generatedContent").show();
+
+                  // Traitement amélioré du contenu généré
+                  var formattedContent = response.content
+                    .replace(
+                      /\*\*(.*?)\*\*/g,
+                      '<span class="highlighted">$1</span>'
+                    )
+                    .replace(/\n/g, "<br>") // Ajout des retours à la ligne
+                    .replace(
+                      /(#{1,6})\s*(.*?)$/gm,
+                      function (match, hashes, title) {
+                        var level = hashes.length;
+                        return `<h${level}>${title}</h${level}>`;
+                      }
+                    );
+
+                  $("#content").html(formattedContent);
+
+                  $("#backButton").show();
+                } else {
+                  alert("Erreur : " + response.message);
+                }
+              },
+              error: function (xhr, status, error) {
+                console.error("Erreur AJAX:", status, error);
+                console.log("Réponse brute:", xhr.responseText);
+                alert(
+                  "Une erreur est survenue lors de la soumission du formulaire."
+                );
+              },
+            });
+          });
+        }
+      });
+    </script>
+  </body>
+</html>
